@@ -9,9 +9,9 @@ package leveldb
 import (
 	"bytes"
 	"fmt"
-	"github.com/syndtr/goleveldb/leveldb/filter"
-	"github.com/syndtr/goleveldb/leveldb/opt"
-	"github.com/syndtr/goleveldb/leveldb/storage"
+	"github.com/nikandfor/goleveldb/leveldb/filter"
+	"github.com/nikandfor/goleveldb/leveldb/opt"
+	"github.com/nikandfor/goleveldb/leveldb/storage"
 	"io"
 	"math/rand"
 	"testing"

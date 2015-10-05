@@ -10,8 +10,8 @@ import (
 	"encoding/binary"
 	"fmt"
 
-	"github.com/syndtr/goleveldb/leveldb/errors"
-	"github.com/syndtr/goleveldb/leveldb/memdb"
+	"github.com/nikandfor/goleveldb/leveldb/errors"
+	"github.com/nikandfor/goleveldb/leveldb/memdb"
 )
 
 type ErrBatchCorrupted struct {

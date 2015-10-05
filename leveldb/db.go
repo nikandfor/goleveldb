@@ -17,14 +17,14 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/syndtr/goleveldb/leveldb/errors"
-	"github.com/syndtr/goleveldb/leveldb/iterator"
-	"github.com/syndtr/goleveldb/leveldb/journal"
-	"github.com/syndtr/goleveldb/leveldb/memdb"
-	"github.com/syndtr/goleveldb/leveldb/opt"
-	"github.com/syndtr/goleveldb/leveldb/storage"
-	"github.com/syndtr/goleveldb/leveldb/table"
-	"github.com/syndtr/goleveldb/leveldb/util"
+	"github.com/nikandfor/goleveldb/leveldb/errors"
+	"github.com/nikandfor/goleveldb/leveldb/iterator"
+	"github.com/nikandfor/goleveldb/leveldb/journal"
+	"github.com/nikandfor/goleveldb/leveldb/memdb"
+	"github.com/nikandfor/goleveldb/leveldb/opt"
+	"github.com/nikandfor/goleveldb/leveldb/storage"
+	"github.com/nikandfor/goleveldb/leveldb/table"
+	"github.com/nikandfor/goleveldb/leveldb/util"
 )
 
 // DB is a LevelDB database.
@@ -964,6 +964,45 @@ func (db *DB) GetProperty(name string) (value string, err error) {
 	}
 
 	return
+}
+
+// CompactionStats contains statistic data about compact
+type CompactionStats struct {
+	Level    int
+	Tables   int
+	Size     uint64
+	Duration time.Duration
+	Read     uint64
+	Write    uint64
+}
+
+// GetStats returns statistics about compacts
+func (db *DB) GetStats() ([]CompactionStats, error) {
+	err := db.ok()
+	if err != nil {
+		return nil, err
+	}
+
+	v := db.s.version()
+	defer v.release()
+
+	res := []CompactionStats{}
+	for level, tables := range v.tables {
+		duration, read, write := db.compStats[level].get()
+		if len(tables) == 0 && duration == 0 {
+			continue
+		}
+		res = append(res, CompactionStats{
+			Level:    level,
+			Tables:   len(tables),
+			Size:     tables.size(),
+			Duration: duration,
+			Read:     read,
+			Write:    write,
+		})
+	}
+
+	return res, nil
 }
 
 // SizeOf calculates approximate sizes of the given key ranges.
